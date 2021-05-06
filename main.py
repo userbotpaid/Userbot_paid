@@ -1,8 +1,16 @@
+from selenium import webdriver
+import os
+
+chrome_options = webdriver.ChromeOptions()
+chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
+chrome_options.add_argument("--headless")
+chrome_options.add_argument("--disable-dev-shm-usage")
+chrome_options.add_argument("--no-sandbox")
+driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+
 from telegram.ext import *
 from telegram.ext import MessageHandler, Filters
-from selenium import webdriver
 import time
-from selenium.webdriver.chrome.options import Options
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import re
 
@@ -13,10 +21,6 @@ name = ""
 caption = ""
 seasoncap = ""
 newname = ""
-options = Options()
-options.add_argument('--headless')
-options.add_argument('--disable-gpu')
-driver = webdriver.Chrome(options=options)
 r = 1
 rawname = ""
 text = ""
