@@ -1,11 +1,9 @@
-import constants as keys
 from telegram.ext import *
 from telegram.ext import MessageHandler, Filters
 from selenium import webdriver
 import time
 from selenium.webdriver.chrome.options import Options
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
-
 import re
 
 length = ''
@@ -156,9 +154,6 @@ def webmanager(name, url, k, photo, context, update):
     view = driver.find_element_by_xpath('//*[@id="app"]/section/main/section/main/div/div[2]/div/div/div/div/div/div/table/tbody/tr[1]/td[2]')
     purl = view.text
     print(purl)
-    if t == 3:
-        u  = 1
-
     pdiskurl = "http://www.pdisk.net/share-video?videoid={}".format(purl)
     print(pdiskurl)
     if re.search("Season", text):
@@ -313,7 +308,7 @@ def main():
     global u
     global r
     print("Bot Has Started")
-    updater = Updater(keys.API_KEY, use_context=True)
+    updater = Updater("1664124045:AAGN4IzOmw_PrwSTR9NSx9Ri7Vp4j3-KpIQ", use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("Start", start_command))
     dp.add_handler(MessageHandler(Filters.photo, handle_photo))
@@ -327,19 +322,3 @@ def main():
 
 main()
 
-"""for i in range(0 , len(URLS)-1):
-        if j == 1:
-            z = 1
-            seasoncap = f"{seasonname}\n [Episode {i + 1}](buttonurl://{URLS[i]})\n[Episode {z}](buttonurl://{URLS[i + 1]}:same)"
-            j = j+1
-        else:
-            try:
-                seasoncap = seasoncap + f"\n[Episode {i +z}](buttonurl://{URLS[i+1]})\n[Episode {z+1}](buttonurl://{URLS[i + 2]}:same)"
-            except:
-                try:
-                    print("season 1 error")
-                    seasoncap = seasoncap + f"\n[Episode {i +1}](buttonurl://{URLS[i]})"
-                except:
-                    print("sesason2 error")
-                    seasoncap = seasoncap
-        z = z+1"""
