@@ -312,7 +312,7 @@ def main():
     global u
     global r
     print("Bot Has Started")
-    updater = Updater("664124045:AAGN4IzOmw_PrwSTR9NSx9Ri7Vp4j3-KpIQ", use_context=True)
+    updater = Updater("1664124045:AAGN4IzOmw_PrwSTR9NSx9Ri7Vp4j3-KpIQ", use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("Start", start_command))
     dp.add_handler(MessageHandler(Filters.photo, handle_photo))
