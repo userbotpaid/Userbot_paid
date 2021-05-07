@@ -124,10 +124,10 @@ def webmanager(name, url, k, photo, context, update):
     if t == 1:
         driver.get('http://www.pdisk.net/upload?type=url')
         email = driver.find_element_by_xpath('//*[@id="app"]/article/div[1]/div[2]/div[1]/span/input')
-        email.send_keys("dhanush544531@gmail.com")
+        email.send_keys("")
 
         password = driver.find_element_by_xpath('//*[@id="app"]/article/div[1]/div[2]/div[2]/span/input')
-        password.send_keys("dhanush787")
+        password.send_keys("")
 
         submit = driver.find_element_by_xpath('//*[@id="app"]/article/div[1]/div[2]/div[3]/button/span')
         submit.click()
@@ -312,7 +312,7 @@ def main():
     global u
     global r
     print("Bot Has Started")
-    updater = Updater("1664124045:AAGN4IzOmw_PrwSTR9NSx9Ri7Vp4j3-KpIQ", use_context=True)
+    updater = Updater(TOKEN, use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("Start", start_command))
     dp.add_handler(MessageHandler(Filters.photo, handle_photo))
