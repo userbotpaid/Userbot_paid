@@ -65,6 +65,7 @@ def handle_photo(update, context):
     global length_var
     global txxt
     URLS = []
+    url = []
     chatid = update.message.chat_id
     print(chatid)
 
@@ -207,10 +208,11 @@ def webmanager(name, url, k, photo, context, update):
     URLS.append(pdiskurl)
     if r == 1:
         cap = k.replace(url, pdiskurl) #url in the urls of the previous text
+        
         r = 2
     else:
         cap = cap.replace(url, pdiskurl)
-     cap = re.sub('@[^\s]+','@AllMoviesAskForMovies',cap)
+     
         print("length= ",length)
         if u == length:
             forwardphoto(update, context, photo, cap)
@@ -352,6 +354,7 @@ def forwardphoto(update, context, photo, c):
     global u
     global seasoncap
     u = 1
+    c = re.sub('@[^\s]+','@AllMoviesAskForMovies',c)
     context.bot.send_photo(chat_id=chatid, photo=photo, caption=c)
     r = 1
 
