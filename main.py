@@ -14,6 +14,7 @@ import time
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import re
 
+movie_varient = []
 length = ''
 url = ""
 photo = ""
@@ -21,6 +22,7 @@ name = ""
 caption = ""
 seasoncap = ""
 newname = ""
+txxt = ""
 r = 1
 rawname = ""
 text = ""
@@ -35,6 +37,7 @@ j = 1
 cap = ""
 totbutton = ""
 chatid = ""
+length_var = 0
 
 
 def start_command(update, context):
@@ -58,6 +61,9 @@ def handle_photo(update, context):
     global photo
     global text
     global URLS
+    global movie_varient
+    global length_var
+    global txxt
     URLS = []
     chatid = update.message.chat_id
     print(chatid)
@@ -66,9 +72,32 @@ def handle_photo(update, context):
     photo = update.message.photo[-1].file_id
 
     text = str(update.message.caption)
+    txxt = text
     print(text)
     url = re.findall("(?P<url>https?://[^\s]+)", text)
     print(url)
+    regrex_pattern = re.compile(pattern="["
+                                        u"\U0001F600-\U0001F64F"  # emoticons
+                                        u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                                        u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                                        u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
+                                        "]+", flags=re.UNICODE)
+    if re.search(":-", txxt):
+        txxt = txxt.replace(":-", "")
+    elif re.search(":", txxt):
+        txxt = txxt.replace(":", "")
+    elif re.search("", txxt):
+        txxt = txxt.replace(":", "")
+    txxt = txxt.replace("-", "")
+    textd = regrex_pattern.sub(r'', txxt)
+    text = re.sub('@[^\s]+','@AllMoviesAskForMovies',text)
+
+
+
+
+    movie_var = re.findall(r'\n(.*?)(\n)?http', textd)
+
+    movie_varient = [item[0] for item in movie_var]
     lines = text.split('\n')
     rawname = lines[0]
     if re.search("🎬Title", rawname):
@@ -82,31 +111,41 @@ def handle_photo(update, context):
 
     elif re.search("Title :", rawname):
         name = rawname.replace("Title :", "")
+
+    elif re.search("🎬", rawname):
+        name = rawname.replace("🎬", "")
+
+    elif re.search("📼", rawname):
+        name = rawname.replace("📼", "")
+
     else:
         name = rawname
-    print(name)
+
     length = len(url)
+    length_var = len(movie_varient)
     if re.search("Season", text):
         print("season Detected")
         if n == 1:
             name = ""
             n = n + 1
         update.message.reply_text(
-            "OK Its a Series \n Sent The Name OK The Series With Season No\nExample:Money Heist S01 ")
+            "OK Its a Series \n Sent The Name Of The Series With Season Number\nExample:Money Heist S01 ")
 
-        print(name)
         u = 1
 
         if re.search("Season", text):
             w = 1
     else:
-        print("MOvie")
+        print("Movie Detected")
         u = 1
         if re.search("How", text):
             length = length - 1
+            length_var = length_var - 1
         for i in range(0, length):
             print("i = ", i)
             pdurl = url[i]
+
+
             webmanager(name, pdurl, text, photo, context, update)
 
 
@@ -151,30 +190,34 @@ def webmanager(name, url, k, photo, context, update):
     upload = driver.find_element_by_xpath('//*[@id="control-hooks_fileUrl"]')
     upload.send_keys(url)
     filename = driver.find_element_by_xpath('//*[@id="control-hooks_fileTitle"]')
-    filename.send_keys(name)
+    filename.send_keys(name.encode('ascii', errors= 'ignore').decode())
+
     uploadbutton = driver.find_element_by_xpath('//*[@id="control-hooks"]/div[5]/div/div/div/button/span')
     uploadbutton.click()
     driver.get('http://www.pdisk.net/home')
     driver.refresh()
     view = driver.find_element_by_xpath('//*[@id="app"]/section/main/section/main/div/div[2]/div/div/div/div/div/div/table/tbody/tr[1]/td[2]')
     purl = view.text
-    print(purl)
     pdiskurl = "http://www.pdisk.net/share-video?videoid={}".format(purl)
     print(pdiskurl)
-    if re.search("Season", text):
-        URLS.append(pdiskurl)
+
+
+
+    URLS.append(pdiskurl)
     if r == 1:
-        cap = k.replace(url, pdiskurl)
+        cap = k.replace(url, pdiskurl) #url in the urls of the previous text
         r = 2
     else:
         cap = cap.replace(url, pdiskurl)
-        print(cap)
-        print(length)
+
+        print("length= ",length)
         if u == length:
             forwardphoto(update, context, photo, cap)
             if re.search("Season", text):
                 print("called button Maker")
                 buttonmaker(update, context, photo)
+            else:
+                movie_button(update, context, photo)
             print(u, length)
         else:
             print(u, length)
@@ -192,7 +235,7 @@ def handle_Seasons(update, context):
     if w == 1:
         name = ""
         name = str(update.message.text)
-        print(name)
+
         w = w + 1
         if re.search("How", text):
             length = length - 1
@@ -204,7 +247,7 @@ def handle_Seasons(update, context):
                 newname = name + f"E0{i + 1}"
             elif i >= 10:
                 newname = name + f"E{i + 1}"
-            print("name :", newname)
+
             pdurl = url[i]
             webmanager(newname, pdurl, text, photo, context, update)
 
@@ -280,7 +323,6 @@ def buttonmaker(update, context, photo):
 
         seasoncap = seasonname + "\n" + totbutton
 
-        print(seasoncap)
         update.message.reply_text(seasoncap)
         forwardphoto(update, context, photo, seasoncap)
 
@@ -292,6 +334,16 @@ def buttonmaker(update, context, photo):
     r = 1
 
     name = ""
+def movie_button(update,context, photo):
+    global movie_varient
+    global length_var
+    global URLS
+    button = []
+
+    for i in range(0, len(URLS)):
+        button.append([InlineKeyboardButton(text=movie_varient[i], url=URLS[i])])
+
+    context.bot.send_photo(chat_id=chatid, photo=photo, caption=name, reply_markup=InlineKeyboardMarkup(button))
 
 
 def forwardphoto(update, context, photo, c):
@@ -313,7 +365,7 @@ def main():
     global u
     global r
     print("Bot Has Started")
-    updater = Updater("1664124045:AAGN4IzOmw_PrwSTR9NSx9Ri7Vp4j3-KpIQ", use_context=True)
+    updater = Updater("1745412728:AAGJMHH85G4EP-ngtvn4xTVcegJiTzjFHck", use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("Start", start_command))
     dp.add_handler(MessageHandler(Filters.photo, handle_photo))
@@ -326,4 +378,3 @@ def main():
 
 
 main()
-
