@@ -221,7 +221,7 @@ def buttonmaker(update, context, photo):
     u = 1
     j = 1
     button = []
-    for i in range(0, len(URLS)-1):
+    for i in range(0, len(URLS)):
         button.append([InlineKeyboardButton(text=f'Episode {i+1}', url =URLS[i])])
 
 
