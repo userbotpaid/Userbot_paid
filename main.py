@@ -90,7 +90,7 @@ def handle_photo(update, context):
         txxt = txxt.replace(":", "")
     txxt = txxt.replace("-", "")
     textd = regrex_pattern.sub(r'', txxt)
-    text = re.sub('@[^\s]+','@AllMoviesAskForMovies',text)
+   
 
 
 
@@ -125,6 +125,7 @@ def handle_photo(update, context):
     length_var = len(movie_varient)
     if re.search("Season", text):
         print("season Detected")
+        URLS = []
         if n == 1:
             name = ""
             n = n + 1
@@ -145,7 +146,7 @@ def handle_photo(update, context):
             print("i = ", i)
             pdurl = url[i]
 
-
+            
             webmanager(name, pdurl, text, photo, context, update)
 
 
@@ -209,7 +210,7 @@ def webmanager(name, url, k, photo, context, update):
         r = 2
     else:
         cap = cap.replace(url, pdiskurl)
-
+     cap = re.sub('@[^\s]+','@AllMoviesAskForMovies',cap)
         print("length= ",length)
         if u == length:
             forwardphoto(update, context, photo, cap)
