@@ -101,6 +101,7 @@ def handle_photo(update, context):
             w = 1
     else:
         print("MOvie")
+        u = 1
         if re.search("How", text):
             length = length - 1
         for i in range(0, length):
