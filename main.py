@@ -44,7 +44,7 @@ length_var = 0
 
 
 def start_command(update, context):
-    update.message.reply_text("Sent ME The Any Pdisk Post")
+    update.message.reply_text("Sent Me Any Pdisk Post")
     chatid = update.message.chat_id
     print(chatid)
 def reset_command(update, context):
@@ -100,7 +100,7 @@ def reset_command(update, context):
     text = ""
     cap = ""
     t = 1
-    k = 1
+    
     u = 1
     w = 0
     n = 1
