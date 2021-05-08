@@ -14,6 +14,9 @@ import time
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import re
 
+link = ""
+sorted_links = []
+gg = 0
 movie_varient = []
 length = ''
 url = ""
@@ -41,10 +44,161 @@ length_var = 0
 
 
 def start_command(update, context):
-    update.message.reply_text("Sent ME The Link")
-    print(dir(update.message))
+    update.message.reply_text("Sent ME The Any Pdisk Post")
     chatid = update.message.chat_id
     print(chatid)
+def reset_command(update, context):
+    global DB
+    global t
+    global driver
+    global name
+    global chatid
+    global w
+    global u
+    global k
+    global n
+    global length
+    global url
+    global photo
+    global text
+    global URLS
+    global movie_varient
+    global length_var
+    global txxt
+    global r
+    global gg
+    global sorted_links
+    global caption
+    global seasoncap
+    global newname
+    global rawname
+    global cap
+    global j
+    gg = 0
+    movie_varient = []
+    sorted_links = []
+    length = ''
+    url = ""
+    photo = ""
+    name = ""
+    caption = ""
+    seasoncap = ""
+    newname = ""
+    txxt = ""
+    r = 1
+    rawname = ""
+    chatid = update.message.chat_id
+    print(chatid)
+    DB = []
+    movie_varient = []
+    length = ''
+    u = 1
+    chatid = ""
+    length_var = 0
+    url = []
+    URLS = []
+    text = ""
+    cap = ""
+    t = 1
+    k = 1
+    u = 1
+    w = 0
+    n = 1
+    j = 1
+    update.message.reply_text("Reset And Ready")
+    w = 1
+    main()
+
+def link_command(update, context):
+    global sorted_links
+    link = str(update.message.text)
+    print(link)
+    link = link.replace("/link", "")
+    name_matches = re.finditer("📝 File Name: ", link)
+    name_match_positions = [match.start() + 13 for match in name_matches]
+
+    name_end_matches = re.finditer("⚖️ File Size", link)
+    name_end_match_positions = [match.start() - 2 for match in name_end_matches]
+
+    names = []
+    for idx, name in enumerate(name_match_positions):
+        s = name
+        e = name_end_match_positions[idx]
+        names.append(link[s:e])
+
+    links = re.findall("(?P<url>https?://[^\s]+)", link)
+
+    s = []
+    e = []
+    for name in names:
+        match = re.search(r'S\d\dE\d\d', name)
+        se = match.group()
+        s.append(se[1:3])
+        e.append(se[4:6])
+
+    items_raw = {}
+    for idx, item in enumerate(names):
+        items_raw[idx] = (s[idx], e[idx], links[idx])
+    sort1 = sorted(items_raw.items(), key=lambda x: (x[1], x[0]))
+
+    sorted_links = [link[1][2] for link in sort1]
+
+    print(sorted_links)
+    update.message.reply_text("Hmm Sent the Name /name")
+
+def name_command(update, context):
+    global DB
+    global neem
+    global sorted_links
+    neem = str(update.message.text)
+    if len(DB) != 3:
+        DB.append(neem)
+        if len(DB) == 1:
+            update.message.reply_text("Ok Now sent season number /name\nExample: 01")
+        if len(DB) == 2:
+            update.message.reply_text("Ok Now sent Starting Episode /name\nExample: 01")
+    else:
+        update.message.reply_text("Ok Great!!, Please Wait")
+
+    if len(DB)==3:
+        update.message.reply_text("OK")
+        neem = DB[0]
+        se = DB[1]
+        ep = DB[2]
+        neem = neem.replace("/name", "")
+        se = str(se.replace("/name",""))
+        ep = int(ep.replace("/name", ""))
+        ll = 0
+        butt1 = ""
+        if (len(sorted_links)% 2) == 0:
+            x = 1
+            for i in range(0, int((sorted_links) / 2)):
+                y = x + 1
+                if i == 0:
+                    butt1 = f"Episode {i + ep}={sorted_links[i]} + Episode {i + gg + 1}={sorted_links[i + 1]}\n"
+                else:
+                    butt1 = butt1 + f"Episode {i + x + ep}={sorted_links[i + x]} + Episode {i + ep + y}={sorted_links[i + y]}\n"
+                    x = x + 1
+                update.message.reply_text(butt1)
+
+        else:
+            ken = len(sorted_links) + 1
+            ken = int(ken / 2)
+            x = 1
+            for i in range(0, ken):
+                if i == 0:
+                    butt1 = f"Episode {i + ep}={sorted_links[i]} + Episode {i + ep + 1}={sorted_links[i + 1]}\n"
+                else:
+                    try:
+                        y = x + 1
+                        butt1 = butt1 + f"Episode {i + x + ep}={sorted_links[i + x]} + Episode {i + ep + y}={sorted_links[i + y]}\n"
+                        x = x + 1
+                    except:
+                        butt1 = butt1 + f"Episode {i + x + ep}={sorted_links[i + x]}"
+                        update.message.reply_text(butt1)
+
+
+
 
 
 def handle_photo(update, context):
@@ -91,10 +245,6 @@ def handle_photo(update, context):
         txxt = txxt.replace(":", "")
     txxt = txxt.replace("-", "")
     textd = regrex_pattern.sub(r'', txxt)
-   
-
-
-
 
     movie_var = re.findall(r'\n(.*?)(\n)?http', textd)
 
@@ -146,9 +296,8 @@ def handle_photo(update, context):
         for i in range(0, length):
             print("i = ", i)
             pdurl = url[i]
-
-            
-            webmanager(name, pdurl, text, photo, context, update)
+            nam = str(name.encode('ascii', errors='ignore').decode()) + " - " + movie_varient[i]
+            webmanager(nam, pdurl, text, photo, context, update)
 
 
 def webmanager(name, url, k, photo, context, update):
@@ -192,28 +341,28 @@ def webmanager(name, url, k, photo, context, update):
     upload = driver.find_element_by_xpath('//*[@id="control-hooks_fileUrl"]')
     upload.send_keys(url)
     filename = driver.find_element_by_xpath('//*[@id="control-hooks_fileTitle"]')
-    filename.send_keys(name.encode('ascii', errors= 'ignore').decode())
+    filename.send_keys(name.encode('ascii', errors='ignore').decode())
 
     uploadbutton = driver.find_element_by_xpath('//*[@id="control-hooks"]/div[5]/div/div/div/button/span')
     uploadbutton.click()
+    update.message.reply_text(f"Uploaded {name}")
     driver.get('http://www.pdisk.net/home')
     driver.refresh()
-    view = driver.find_element_by_xpath('//*[@id="app"]/section/main/section/main/div/div[2]/div/div/div/div/div/div/table/tbody/tr[1]/td[2]')
+    view = driver.find_element_by_xpath(
+        '//*[@id="app"]/section/main/section/main/div/div[2]/div/div/div/div/div/div/table/tbody/tr[1]/td[2]')
     purl = view.text
     pdiskurl = "http://www.pdisk.net/share-video?videoid={}".format(purl)
     print(pdiskurl)
 
-
-
     URLS.append(pdiskurl)
     if r == 1:
-        cap = k.replace(url, pdiskurl) #url in the urls of the previous text
-        
+        cap = k.replace(url, pdiskurl)  # url in the urls of the previous text
+
         r = 2
     else:
         cap = cap.replace(url, pdiskurl)
-     
-        print("length= ",length)
+
+        print("length= ", length)
         if u == length:
             forwardphoto(update, context, photo, cap)
             if re.search("Season", text):
@@ -234,6 +383,7 @@ def handle_Seasons(update, context):
     global r
     global length
     global newname
+    global gg
     r = 1
     if w == 1:
         name = ""
@@ -242,17 +392,23 @@ def handle_Seasons(update, context):
         w = w + 1
         if re.search("How", text):
             length = length - 1
+        w = 2
     if name != "":
-        for i in range(0, length):
+        if w == 4:
+            gg = int(update.message.text)
+            for i in range(0, length):
 
-            print("i = ", i)
-            if i <= 9:
-                newname = name + f"E0{i + 1}"
-            elif i >= 10:
-                newname = name + f"E{i + 1}"
+                if i + gg <= 9:
+                    newname = name + f"E0{i + gg}"
+                elif i + gg >= 10:
+                    newname = name + f"E{i + gg}"
 
-            pdurl = url[i]
-            webmanager(newname, pdurl, text, photo, context, update)
+                pdurl = url[i]
+                webmanager(newname, pdurl, text, photo, context, update)
+        else:
+            update.message.reply_text("Episode")
+            w = 4
+
 
 
 def buttonmaker(update, context, photo):
@@ -268,8 +424,7 @@ def buttonmaker(update, context, photo):
     j = 1
     button = []
     for i in range(0, len(URLS)):
-        button.append([InlineKeyboardButton(text=f'Episode {i+1}', url =URLS[i])])
-
+        button.append([InlineKeyboardButton(text=f'Episode {i + gg}', url=URLS[i])])
 
     for l in range(1, 20):
         if re.search(f"S0{l}", newname):
@@ -277,67 +432,42 @@ def buttonmaker(update, context, photo):
         elif re.search(f"S{l}", newname):
             seasonname = newname.replace(f"S{l}", f"Season {l}")
     context.bot.send_photo(chat_id=chatid, photo=photo, caption=seasonname, reply_markup=InlineKeyboardMarkup(button))
-    if len(URLS) % 2 == 0:
-        leng = int(len(URLS) / 2)
-        leng_type = "even"
+    if (len(URLS)%2) == 0:
+        x = 1
+        for i in range(0, int(len(URLS)/2)):
+            y = x + 1
+            if i == 0:
+                butt1 = f"Episode {i + gg}={URLS[i]} + Episode {i + gg + 1}={URLS[i + 1]}\n"
+            else:
+                butt1 = butt1 + f"Episode {i + x + gg}={URLS[i + x]} + Episode {i + gg + y}={URLS[i + y]}\n"
+                x = x+1
     else:
-        leng = len(URLS) - 1
-        leng = int(leng / 2)
-        leng_type = "odd"
-    y = 0
-    x = 1
-    try:
-        if leng_type == "even":
-            print("even")
-            for i in range(leng):
-                ep1 = x
-                ep2 = x + 1
-                url1 = URLS[y]
-                url2 = URLS[x]
-                butt1 = f"[Episode {ep1}](buttonurl://{url1})"
-                y = y + 1
-                x = x + 1
-                butt2 = f"[Episode {ep2}](buttonurl://{url2})"
+        ken = len(URLS)+1
+        ken = int(ken/2)
+        x=1
+        for i in range(0, ken):
+            if i == 0:
+                    butt1 = f"Episode {i + gg}={URLS[i]} + Episode {i + gg + 1}={URLS[i + 1]}\n"
+            else:
+                try:
+                    y = x + 1
+                    butt1 = butt1 + f"Episode {i + x + gg}={URLS[i + x]} + Episode {i + gg + y}={URLS[i + y]}\n"
+                    x = x + 1
+                except:
+                    butt1 = butt1 + f"Episode {i + x + gg}={URLS[i + x]}"
 
-                y = y + 1
-                x = x + 1
 
-                totbutton = totbutton + "\n" + butt1 + "\n" + butt2
-        if leng_type == "odd":
-            print("odd")
-            for i in range(leng):
-                ep1 = x
-                ep2 = x + 1
-                url1 = URLS[y]
-                url2 = URLS[x]
-                butt1 = f"[Episode {ep1}](buttonurl://{url1})"
-                y = y + 1
-                x = x + 1
-                butt2 = f"[Episode {ep2}](buttonurl://{url2}:same)"
 
-                y = y + 1
-                x = x + 1
-                totbutton = totbutton + butt1 + "\n" + butt2
-            if leng_type == "odd":
-                ep1 = x
-                url1 = URLS[y]
-                extrabutton = f"[Episode {ep1}](buttonurl://{url1})"
-                totbutton = totbutton + "\n" + extrabutton
 
-        seasoncap = seasonname + "\n" + totbutton
 
-        update.message.reply_text(seasoncap)
-        forwardphoto(update, context, photo, seasoncap)
-
-    except:
-        print("caption too long")
-        u =1
-
+    update.message.reply_text(butt1)
 
     r = 1
 
     name = ""
-def movie_button(update,context, photo):
+
+
+def movie_button(update, context, photo):
     global movie_varient
     global length_var
     global URLS
@@ -354,10 +484,9 @@ def forwardphoto(update, context, photo, c):
     global u
     global seasoncap
     u = 1
-    c = re.sub('@[^\s]+','@AllMoviesAskForMovies',c)
+    c = re.sub('@[^\s]+', '@AllMoviesAskForMovies', c)
     context.bot.send_photo(chat_id=chatid, photo=photo, caption=c)
     r = 1
-
 
     print("U reseted to ", u)
 
@@ -372,6 +501,9 @@ def main():
     updater = Updater("1745412728:AAGJMHH85G4EP-ngtvn4xTVcegJiTzjFHck", use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("Start", start_command))
+    dp.add_handler(CommandHandler("Link", link_command))
+    dp.add_handler(CommandHandler("Name", name_command))
+    dp.add_handler(CommandHandler("Reset", reset_command))
     dp.add_handler(MessageHandler(Filters.photo, handle_photo))
     dp.add_handler(MessageHandler(Filters.text, handle_Seasons))
     if k == 1:
