@@ -356,17 +356,19 @@ def webmanager(name, url, k, photo, context, update):
 
     URLS.append(pdiskurl)
     if r == 1:
-        cap = k.replace(url, pdiskurl)  # url in the urls of the previous text
+        cap = k.replace(url, pdiskurl)  # url is the urls of the previous text
+        if u == length:
 
+            forwardphoto(update, context, photo, cap)
+            movie_button(update, context, photo)
         r = 2
     else:
         cap = cap.replace(url, pdiskurl)
-
         print("length= ", length)
+
         if u == length:
             forwardphoto(update, context, photo, cap)
             if re.search("Season", text):
-                print("called button Maker")
                 buttonmaker(update, context, photo)
             else:
                 movie_button(update, context, photo)
