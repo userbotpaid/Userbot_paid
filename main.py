@@ -15,6 +15,7 @@ from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 import re
 
 link = ""
+fileneemDB = []
 sorted_links = []
 gg = 0
 movie_varient = []
@@ -28,15 +29,18 @@ newname = ""
 txxt = ""
 r = 1
 rawname = ""
+fileneem = ""
 text = ""
 DB = []
 URLS = []
+kkkk = 0
 t = 1
 k = 1
 u = 1
 w = 0
 n = 1
 j = 1
+h = 1
 cap = ""
 totbutton = ""
 chatid = ""
