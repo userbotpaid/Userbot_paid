@@ -74,6 +74,7 @@ def reset_command(update, context):
     global rawname
     global cap
     global j
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
     gg = 0
     movie_varient = []
     sorted_links = []
@@ -493,7 +494,82 @@ def forwardphoto(update, context, photo, c):
     print("U reseted to ", u)
 
     seasoncap = ""
+def handle_files(update,context):
+    global fileneem
+    global h
 
+    time.sleep(7)
+    fileneem = str(update.message.document.file_name)
+    fileneemDB.append(fileneem)
+    update.message.reply_text("OK please Wait I Will Upload the files and sent in back to u")
+
+    context.bot.forward_message(chat_id='1676646973', from_chat_id="868213406",message_id=update.effective_message.message_id)
+
+
+
+def url_command(update,context):
+    url  = str(update.message.text)
+    url = url.replace("/url ", "")
+    print(url)
+    global h
+    h = 2
+    global t
+    global driver
+    global DB
+    global chatid
+    global caption
+    global u
+    global r
+    global cap
+    global length
+    global URLS
+    global fileneemDB
+    global kkkk
+
+    fileneem = fileneemDB[kkkk]
+    if t == 1:
+        driver.get('http://www.pdisk.net/upload?type=url')
+        email = driver.find_element_by_xpath('//*[@id="app"]/article/div[1]/div[2]/div[1]/span/input')
+        email.send_keys("dhanush544531@gmail.com")
+
+        password = driver.find_element_by_xpath('//*[@id="app"]/article/div[1]/div[2]/div[2]/span/input')
+        password.send_keys("dhanush787")
+
+        submit = driver.find_element_by_xpath('//*[@id="app"]/article/div[1]/div[2]/div[3]/button/span')
+        submit.click()
+        t = t + 1
+
+    time.sleep(1)
+    driver.get('http://www.pdisk.net/upload?type=url')
+    if t == 2:
+        nextbutton = driver.find_element_by_xpath('//*[@id="app"]/section/div[2]/div/div[3]')
+        nextbutton.click()
+        nextbutton = driver.find_element_by_xpath('//*[@id="app"]/section/div[2]/div/div[3]')
+        nextbutton.click()
+        nextbutton = driver.find_element_by_xpath('//*[@id="app"]/section/div[2]/div/div[3]')
+        nextbutton.click()
+        nextbutton = driver.find_element_by_xpath('//*[@id="app"]/section/div[2]/div/div[3]')
+        nextbutton.click()
+        agreebutton = driver.find_element_by_xpath('//*[@id="control-hooks_checkTos"]')
+        agreebutton.click()
+        t = t + 1
+    upload = driver.find_element_by_xpath('//*[@id="control-hooks_fileUrl"]')
+    upload.send_keys(url)
+
+    filename = driver.find_element_by_xpath('//*[@id="control-hooks_fileTitle"]')
+    filename.send_keys(fileneem)
+
+    uploadbutton = driver.find_element_by_xpath('//*[@id="control-hooks"]/div[5]/div/div/div/button/span')
+    uploadbutton.click()
+    driver.get('http://www.pdisk.net/home')
+    driver.refresh()
+    view = driver.find_element_by_xpath(
+        '//*[@id="app"]/section/main/section/main/div/div[2]/div/div/div/div/div/div/table/tbody/tr[1]/td[2]')
+    purl = view.text
+    pdiskurl = "http://m.pdisk.net/share-video?videoid={}".format(purl)
+    print(pdiskurl)
+    context.bot.send_message(chat_id = "868213406",text = pdiskurl)
+    kkkk = kkkk+1
 
 def main():
     global k
@@ -505,7 +581,9 @@ def main():
     dp.add_handler(CommandHandler("Start", start_command))
     dp.add_handler(CommandHandler("Link", link_command))
     dp.add_handler(CommandHandler("Name", name_command))
+    dp.add_handler(CommandHandler("Url", url_command))
     dp.add_handler(CommandHandler("Reset", reset_command))
+    dp.add_handler(MessageHandler(Filters.document, handle_files))
     dp.add_handler(MessageHandler(Filters.photo, handle_photo))
     dp.add_handler(MessageHandler(Filters.text, handle_Seasons))
     if k == 1:
